@@ -58,6 +58,13 @@ class Player:
     def __repr__(self):
         return "Player(name={}, bag={}, stock={}, position={})".format(self.name, self.bag, self.stock, self.position)
 
+    def __str__(self):
+        s = "Player: {} - bag: {} - 1: {} - 2: {} - 3: {} - 4: {}"
+        levels = [chip.level for chip in self.bag]
+        counts = [levels.count(i) for i in range(1, 5)]
+
+        return s.format(self.name, len(self.bag), *counts)
+
 
 class Submarine:
     
@@ -113,7 +120,6 @@ def roll_dice():
 
 
 if __name__ == '__main__':
-
 
     class Game:
 

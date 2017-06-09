@@ -35,6 +35,7 @@ def loc_to_pos(row, col):
 
     return [int(e) for e in (x, y)]
 
+FPS = 30
 
 BOARD_WIDTH = 300
 BOARD_HEIGHT = 300
