@@ -1,13 +1,5 @@
-
-# coding: utf-8
-
-# In[433]:
-
 import numpy as np
-import random
 
-
-# In[491]:
 
 class Player:
     
@@ -18,7 +10,7 @@ class Player:
         self.position = -1
         self.direction = 1
         self.on_board = True
-    
+
     def transfer_bag(self):
         self.stock.extend(self.bag)
         self.bag = []
@@ -31,14 +23,19 @@ class Player:
         n_step = max(0, dice_roll - n_chip)
         
         board.tile_status[self.position] = 0
-        
-        while n_step:
-            self.position += self.direction
-            
-            if not board.is_occupied(self.position): 
+
+        while n_step > 0:
+            next_step = self.position + self.direction
+
+            if next_step > board.last_free_tile:
+                break
+
+            if not board.is_occupied(next_step):
                 n_step -= 1
 
-        self.position = min(self.position, board.road_len)
+            self.position = next_step
+
+        self.position = min(self.position, len(board.road))
         board.tile_status[self.position] = 1
         
     def take_chip(self, board):
@@ -59,10 +56,8 @@ class Player:
         return (not self.is_onboard) and (self.direction == -1)
     
     def __repr__(self):
-        return f"Player(name={self.name}, bag={self.bag}, stock={self.stock}, position={self.position})"
+        return "Player(name={}, bag={}, stock={}, position={})".format(self.name, self.bag, self.stock, self.position)
 
-
-# In[492]:
 
 class Submarine:
     
@@ -75,10 +70,8 @@ class Submarine:
         return self.air
     
     def __repr__(self):
-        return f"Submarine(air={self.air})"
+        return "Submarine(air={})".format(self.air)
 
-
-# In[510]:
 
 class Chip:
     
@@ -91,205 +84,93 @@ class Chip:
         return self.level == 0
         
     def __repr__(self):
-        return f"Chip(level={self.level}), value={self.value})"
+        return "Chip(level={}), value={})".format(self.level, self.value)
 
-
-# In[511]:
 
 class Board:
     
-    def __init__(self, chip_dict):
-        self.road_len = sum(len(l) for l in chip_dict.values()) 
-        self.tile_status = [0] * self.road_len
-        self.road = []
-        
-        
-        for level in range(1, 5):
-            chips = chip_dict[level][:]
-            random.shuffle(chips)
-            
-            self.road.extend(chips)
-            
+    def __init__(self, chips):
+        self.tile_status = [0] * len(chips)
+        self.road = chips
+
     def is_occupied(self, idx):
         return self.tile_status[idx] == 1
+
+    @property
+    def last_free_tile(self):
+        return ''.join(map(str, self.tile_status)).rfind('0')
 
     def __repr__(self):
         return ", ".join([chip.level for chip in self.road])
 
 
-# In[512]:
-
-# class Deck:
-    
-#     def __init__
-
-
-# In[513]:
-
-CHIPS = {}
-# CHIP_VALUES = [(i+1, j+4*i) for i in range(4) for j in range(4)]
-
-# for level, value in CHIP_VALUES:
-#     CHIPS.append(Chip(level, value))
-#     CHIPS.append(Chip(level, value))
-
-for level in range(4):
-    chips = []
-    for value in range(4):
-        value = value + 4 * level
-        chip = Chip(level + 1, value)
-        chips.append(chip)
-        chips.append(chip)
-    
-    CHIPS[level + 1] = chips
-
-
-# In[514]:
-
 def make_empty_chip():
     return Chip(level=0, value=0)
 
-
-# In[515]:
 
 def roll_dice():
     return np.random.randint(low=1, high=4, size=2).sum()
 
 
-# In[516]:
-
-board = Board(CHIPS)
+if __name__ == '__main__':
 
 
-# In[517]:
+    class Game:
 
-# def finish_roundb
+        def __init__(self, submarine, board, players):
 
-
-# In[518]:
-
-players = [Player('Player {}'.format(i)) for i in range(1, 5)]
-
-
-# In[519]:
-
-players[0].is_back
+            self.board = board
+            self.players = players
+            self.players_in_submarine = []
+            self.submarine = submarine
 
 
-# In[522]:
+            n_round = 3
 
-class Game:
-    
-    def __init__(self, submarine, board, players):
-        
-        self.board = board
-        self.players = players
-        self.players_in_submarine = []
-        self.submarine = submarine
-        
-        
-        n_round = 3
-        
-        for cur_round in range(n_round):
-            print('Round {}'.format(cur_round))
-            
-            while (self.submarine.air > 0) or (any(player.on_board for player in self.players)):
-                
-                for player in self.players:
-                    print('{} turn'.format(player.name))
-                    
-                    if player.is_back:
-                        continue
-                    
-                    #reduce_air
-                    self.submarine.reduce_air(player)
-                    
-                    if (player.direction == 1) and player.on_board:
-                        if input("Going back? (y/n)").lower() == 'y':
-                            player.direction = -1
-                        
-                    #roll dice
-                    dice_roll = roll_dice()
-                    player.move(dice_roll, self.board)
-                        
-                    cur_chip = self.board.road[player.position]
-                    
-                    if not cur_chip.is_empty:
-                        if input('Take level {} chip? (y/n)'.format(cur_chip.level)).lower() == 'y':
-                            player.take_chip(board)
-                    elif (cur_chip.is_empty) and (player.bag):
-                        player.show_bag()
-                        while True:
-                            chip_idx = input('Drop chip?\n{}\Type a number or n'.format(bag_str))
-                            if chip_idx == 'n':
-                                break
-                            elif not chip_idx.isdigit():
-                                print('Input is not a digit')
-                                continue
-                            elif chip_idx not in [range(len(player.bag))]:
-                                print('Input not in index')
-                                continue
-                            else:
-                                self.board.road[player.position] = player.bag.pop(chip_idx)
-                                break
+            for cur_round in range(n_round):
+                print('Round {}'.format(cur_round))
 
+                while (self.submarine.air > 0) or (any(player.on_board for player in self.players)):
 
-# In[504]:
+                    for player in self.players:
+                        print('{} turn'.format(player.name))
 
-# def plot_gameboard(board, players):
-#     for player in players:
-#         print(player)
+                        if player.is_back:
+                            continue
 
+                        #reduce_air
+                        self.submarine.reduce_air(player)
 
-# In[505]:
+                        if (player.direction == 1) and player.on_board:
+                            if input("Going back? (y/n)").lower() == 'y':
+                                player.direction = -1
 
-# import numpy as np
+                        #roll dice
+                        dice_roll = roll_dice()
+                        player.move(dice_roll, self.board)
 
+                        cur_chip = self.board.road[player.position]
 
-# In[509]:
+                        if not cur_chip.is_empty:
+                            if input('Take level {} chip? (y/n)'.format(cur_chip.level)).lower() == 'y':
+                                player.take_chip(board)
+                        elif (cur_chip.is_empty) and (player.bag):
+                            player.show_bag()
+                            while True:
+                                chip_idx = input('Drop chip?\nType a number or n')
+                                if chip_idx == 'n':
+                                    break
+                                elif not chip_idx.isdigit():
+                                    print('Input is not a digit')
+                                    continue
+                                elif chip_idx not in [range(len(player.bag))]:
+                                    print('Input not in index')
+                                    continue
+                                else:
+                                    self.board.road[player.position] = player.bag.pop(chip_idx)
+                                    break
 
-for i in zip(*[list(range(board.road_len)), board.tile_status, [c.level for c in board.road]]):
-    print (i)
+    # for i in zip(*[list(range(board.road_len)), board.tile_status, [c.level for c in board.road]]):
+    #     print (i)
 
-
-# In[507]:
-
-# plot_gameboard(board, players)
-
-
-# In[508]:
-
-Game(submarine=Submarine(), board=board, players=players)
-
-
-# In[338]:
-
-t = input()
-
-
-# In[ ]:
-
-t
-
-
-# In[346]:
-
-t = 1
-if t:
-    print('hello')
-
-
-# In[358]:
-
-'1'.isdigit()
-
-
-# In[359]:
-
-l = []
-
-
-# In[ ]:
-
-l.pop()
-
+    # Game(submarine=Submarine(), board=board, players=players)
