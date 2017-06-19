@@ -8,12 +8,19 @@ class PlayerGraphix(Player):
         Player.__init__(self, name)
 
         self.color = color
+        self.index = index
         self.radius = PLAYER_TOKEN_RADIUS
-        self.x = (index + 1) * PLAYER_INIT_SPACE
-        self.y = 20
+
+        self.x = None
+        self.y = None
+        self.move_to_submarine()
 
     def draw(self, surface):
         pygame.draw.circle(surface, self.color, (self.x, self.y), self.radius)
+
+    def move_to_submarine(self):
+        self.x = ((self.index + 1) * PLAYER_INIT_SPACE)
+        self.y = PLAYER_TOKEN_RADIUS + 20
 
 
 class ChipGraphix(Chip):
