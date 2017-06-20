@@ -1,5 +1,6 @@
 import numpy as np
 import copy
+from collections import Counter
 
 class Player:
     
@@ -53,8 +54,12 @@ class Player:
     def go_back(self):
         self.direction = -1
 
-    # def
-    
+    # @property
+    def chip_per_level(self, level):
+        return len([c for c in self.bag if c.level == level])
+    # def chip_level_counter(self):
+    #     return Counter(chip.level for chip in self.bag)
+
     @property
     def is_onboard(self):
         return self.position >= 0

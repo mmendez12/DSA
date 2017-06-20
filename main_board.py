@@ -60,9 +60,21 @@ class Game:
 
         if len(best_players) == 1:
             player_orders = self.players
-        # else:
-        #     for player in player_orders:
-                # max_level
+        # It's a draw, player the most high level chip win
+        else:
+            for level in range(4, 0, -1):
+
+                if len(best_players) == 1:
+                    return best_players[0]
+
+                if level == 0:
+                    return best_players
+
+                max_chip = max(c.chip_per_level(level) for c in best_players)
+                best_players = [p for p in best_players if p.chip_level_counter(level) == max_chip]
+
+
+
 
 
     @property
@@ -103,7 +115,14 @@ class Game:
 def screen_controls(surface, game):
 
     if game.end:
-        # game.players.sort(key=lambda p: sum(), reverse=True)
+        winner_list = game.winner()
+        winner_name = ' and '.join([w.name for w in winner_list])
+
+        if len(winner_list) > 1:
+            winner_str = "Players {} won".format(winner_name)
+        else:
+            winner_str = "Player {} won".format(winner_name)
+        #TODO: Stop here and print winner's name
 
     player_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
     label = player_font.render(str(game.current_player), 1, game.current_player.color)
@@ -140,9 +159,8 @@ def main():
 
     # init variables
     fpsClock = pg.time.Clock()
-
     tiles = [ChipGraphix(chip, POS_DICT[i], LEVEL_COLOR[chip.level]) for i, chip in enumerate(CHIPS)]
-    players = [PlayerGraphix(color, PLAYER_NAME_TEMPLATE.format(i), i) for i, color in enumerate([RED, GREEN, BLUE])]
+    players = [PlayerGraphix(RED, 'foo', 0), PlayerGraphix(GREEN, 'bar', 1)]
     board = Board(tiles)
 
     game = Game(board, players)
