@@ -1,7 +1,6 @@
-from collections import defaultdict
 from DSA import Chip
-# from myutil import *
 import random
+
 
 def get_chip_loc(idx):
     """
@@ -35,8 +34,9 @@ def loc_to_pos(row, col):
 
     return [int(e) for e in (x, y)]
 
+
 FPS = 30
-SCALE = 5
+SCALE = 3
 BOARD_WIDTH = 300 * SCALE
 BOARD_HEIGHT = 300 * SCALE
 CHIP_SIZE = 20 * SCALE
@@ -49,7 +49,7 @@ N_LEVEL = 4
 
 PLAYER_NAME_TEMPLATE = 'Player {}'
 PLAYER_TOKEN_RADIUS = 5 * SCALE
-RED = (255,0,0)
+RED = (255, 0, 0)
 GREEN = (0, 255, 0)
 BLUE = (0, 0, 255)
 PLAYER_INIT_SPACE = 20 * SCALE

@@ -18,6 +18,7 @@ ACTION_SPACE = 5
 
 ACTION_COLORS_DICT = {False: GREY, True: WHITE}
 
+
 class Game:
     def __init__(self, board, players):
         self.board = board
@@ -56,26 +57,20 @@ class Game:
 
         self.players.sort(lambda p: p.total_score)
         max_score = self.players[-1]
-        best_players = [p for p in self.players if p.total_score == max_score]
+        best_players = [p
+                        for p in self.players
+                        if p.total_score == max_score]
 
-        if len(best_players) == 1:
-            player_orders = self.players
-        # It's a draw, player the most high level chip win
-        else:
-            for level in range(4, 0, -1):
+        for level in range(4, 0, -1):
 
-                if len(best_players) == 1:
-                    return best_players[0]
+            if len(best_players) == 1:
+                return best_players
 
-                if level == 0:
-                    return best_players
+            if level == 0:
+                return best_players
 
-                max_chip = max(c.chip_per_level(level) for c in best_players)
-                best_players = [p for p in best_players if p.chip_level_counter(level) == max_chip]
-
-
-
-
+            max_chip = max(c.chip_per_level(level) for c in best_players)
+            best_players = [p for p in best_players if p.chip_level_counter(level) == max_chip]
 
     @property
     def current_player(self):
@@ -104,12 +99,13 @@ class Game:
 
     @property
     def can_go_back(self):
-        return self.can_roll and (self.current_player.direction == 1) and (self.current_player.position > 0)
+        return self.can_roll and \
+               (self.current_player.direction == 1) and \
+               (self.current_player.position > 0)
 
     @property
     def can_continue(self):
         return self.dice_rolled
-
 
 
 def screen_controls(surface, game):
@@ -152,7 +148,6 @@ def screen_controls(surface, game):
         dropping_rect = dropping_label.get_rect()
         dropping_rect.midtop = (BOARD_WIDTH/2, game.board.road[-1].rect.bottom + SPACE_SIZE)
         surface.blit(dropping_label, dropping_rect)
-
 
 
 def main():
