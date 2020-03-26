@@ -36,6 +36,7 @@ class Game:
         self.just_dropped = False
         self.start = True
         self.end = False
+        self.round_end = False
 
     def next_player(self):
         self.current_player_idx = (self.current_player_idx + 1) % len(self.players)
@@ -165,7 +166,7 @@ def main():
     BOARD_SURF = pg.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT))
 
     # main loop
-    print(game.submarine.air)
+    print(game.submarine)
     while True:
         BOARD_SURF.fill((0, 0, 0))
         screen_controls(BOARD_SURF, game)
@@ -194,7 +195,7 @@ def main():
                     print(f"{game.current_player} roll: {dice_roll}")
                     game.current_player.move(dice_roll, board)
                     game.submarine.air -= game.current_player.n_bag
-                    print(game.submarine.air)
+                    print(game.submarine)
                     if game.current_player.is_back:
                         game.current_player.move_to_submarine()
                     else:
@@ -232,7 +233,6 @@ def main():
 
 
         pg.display.update()
-
         fpsClock.tick(FPS)
 
 

@@ -19,7 +19,7 @@ def get_chip_loc(idx):
      >>> get_chip_loc(9)
      (2, 1)
     """
-    row_idx = int(idx/N_COL)
+    row_idx = int(idx / N_COL)
     last_col_idx = N_COL - 1
 
     if row_idx % 2 == 0:
@@ -50,6 +50,16 @@ def init_chips_and_pos():
     random.shuffle(CHIPS)
     CHIPS.sort(key=lambda x: x.level)
 
-    POS_DICT = {i: loc_to_pos(*get_chip_loc(i)) for i in range(len(CHIPS))}
+    POS_DICT = {}
+    for i in range(len(CHIPS)):
+        chip_loc = get_chip_loc(i)
+        pos = loc_to_pos(chip_loc[0], chip_loc[1])
+        # pos[1] += i * SPACE_SIZE
+        POS_DICT[i] = pos
+
 
     return CHIPS, POS_DICT
+
+
+if __name__ == "__main__":
+    init_chips_and_pos()
