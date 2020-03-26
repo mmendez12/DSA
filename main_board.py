@@ -11,7 +11,7 @@ from graphics import *
 ACTIONS = ['(b): go back', '(r): roll dice', '(t): take chip', '(d): drop chip', '(c): continue']
 
 WHITE = (255, 255, 255)
-GREY = (200, 200, 200)
+GREY = (100, 100, 100)
 
 INIT_ACTION_POS_Y = 100
 ACTION_SPACE = 5
