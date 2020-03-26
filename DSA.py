@@ -128,11 +128,6 @@ class Submarine:
     
     def __init__(self):
         self.air = 10
-            
-    def reduce_air(self, player):
-        n_chip = len(player.bag)
-        self.air = max(0, self.air - n_chip)
-        return self.air
     
     def __repr__(self):
         return "Submarine(air={})".format(self.air)

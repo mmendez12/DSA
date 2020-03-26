@@ -53,24 +53,11 @@ class Game:
         self.board.road = no_empty_road
         self.round += 1
 
-    def winner(self):
+    def get_winners(self):
+        best_player = sorted(self.players)[-1]
+        return [p for p in self.players if p == best_player]
 
-        sorted_players = sorted(self.players, key=lambda p: p.total_score)
-        max_score = self.players[-1].total_score
-        best_players = [p
-                        for p in self.players
-                        if p.total_score == max_score]
 
-        for level in range(4, 0, -1):
-
-            if len(best_players) == 1:
-                return best_players
-
-            if level == 0:
-                return best_players
-
-            max_chip = max(c.chip_per_level(level) for c in best_players)
-            best_players = [p for p in best_players if p.chip_level_counter(level) == max_chip]
 
     @property
     def current_player(self):
@@ -111,13 +98,15 @@ class Game:
 def screen_controls(surface, game):
 
     if game.end:
-        winner_list = game.winner()
+        winner_list = game.get_winners()
         winner_name = ' and '.join([w.name for w in winner_list])
 
         if len(winner_list) > 1:
             winner_str = "Players {} won".format(winner_name)
         else:
             winner_str = "Player {} won".format(winner_name)
+
+        print(winner_str)
         #TODO: Stop here and print winner's name
 
     player_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
