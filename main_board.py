@@ -19,6 +19,18 @@ ACTION_SPACE = 5
 ACTION_COLORS_DICT = {False: GREY, True: WHITE}
 
 
+CHIPS = []
+
+for value in range(CHIP_MAX_VALUE + 1):
+    level = int(value / N_LEVEL) + 1
+    CHIPS.append(Chip(level, value))
+    CHIPS.append(Chip(level, value))
+
+random.shuffle(CHIPS)
+CHIPS.sort(key=lambda x: x.level)
+
+POS_DICT = {i: loc_to_pos(*get_chip_loc(i)) for i in range(len(CHIPS))}
+
 class Game:
     def __init__(self, board, players):
         self.board = board
@@ -52,6 +64,7 @@ class Game:
 
         self.board.road = no_empty_road
         self.round += 1
+        self.submarine.air = AIR
 
     def get_winners(self):
         best_player = sorted(self.players)[-1]
@@ -121,6 +134,12 @@ def screen_controls(surface, game):
     round_rect.bottomleft = (0, BOARD_HEIGHT)
     surface.blit(round_label, round_rect.topleft)
 
+    air_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
+    air_label = air_font.render('Air: {}'.format(game.submarine.air), 1, WHITE)
+    air_rect = air_label.get_rect()
+    air_rect.bottomright = (BOARD_WIDTH, BOARD_HEIGHT)
+    surface.blit(air_label, air_rect.topleft)
+
     actions = [game.can_go_back, game.can_roll, game.can_take, game.can_drop, game.can_continue]
 
     for i, (action, b) in enumerate(zip(ACTIONS, actions)):
@@ -181,7 +200,7 @@ def main():
             if event.type == pg.KEYDOWN:
                 if (event.key == pg.K_r) and game.can_roll:
                     dice_roll = roll_dice()
-                    print(dice_roll)
+                    print(f"{game.current_player} roll: {dice_roll}")
                     game.current_player.move(dice_roll, board)
                     game.submarine.air -= game.current_player.n_bag
                     print(game.submarine.air)

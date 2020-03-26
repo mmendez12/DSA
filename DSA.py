@@ -1,6 +1,6 @@
 import numpy as np
 import copy
-
+from constants import AIR
 from functools import total_ordering
 
 
@@ -127,7 +127,7 @@ class Player:
 class Submarine:
     
     def __init__(self):
-        self.air = 10
+        self.air = AIR
     
     def __repr__(self):
         return "Submarine(air={})".format(self.air)
