@@ -7,15 +7,15 @@ def get_chip_loc(idx):
     :param idx:
     :return: the location of the chip on the grid
 
-     >>> place_chip_on_board(3)
+     >>> get_chip_loc(3)
      (0, 3)
-     >>> place_chip_on_board(4)
+     >>> get_chip_loc(4)
      (1, 3)
-     >>> place_chip_on_board(5)
+     >>> get_chip_loc(5)
      (1, 2)
-     >>> place_chip_on_board(8)
+     >>> get_chip_loc(8)
      (2, 0)
-     >>> place_chip_on_board(9)
+     >>> get_chip_loc(9)
      (2, 1)
     """
     row_idx = int(idx/N_COL)
