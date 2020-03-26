@@ -55,8 +55,8 @@ class Game:
 
     def winner(self):
 
-        self.players.sort(lambda p: p.total_score)
-        max_score = self.players[-1]
+        sorted_players = sorted(self.players, key=lambda p: p.total_score)
+        max_score = self.players[-1].total_score
         best_players = [p
                         for p in self.players
                         if p.total_score == max_score]
@@ -166,6 +166,7 @@ def main():
     BOARD_SURF = pg.display.set_mode((BOARD_WIDTH, BOARD_HEIGHT))
 
     # main loop
+    print(game.submarine.air)
     while True:
         BOARD_SURF.fill((0, 0, 0))
         screen_controls(BOARD_SURF, game)
@@ -193,6 +194,8 @@ def main():
                     dice_roll = roll_dice()
                     print(dice_roll)
                     game.current_player.move(dice_roll, board)
+                    game.submarine.air -= game.current_player.n_bag
+                    print(game.submarine.air)
                     if game.current_player.is_back:
                         game.current_player.move_to_submarine()
                     else:

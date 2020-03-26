@@ -1,12 +1,17 @@
 import numpy as np
 import copy
 
+from functools import total_ordering
 
+
+@total_ordering
 class Player:
     
     def __init__(self, name):
         self.name = name
+        # player's bag while exploring
         self.bag = []
+        # player's total treasures
         self.stock = []
         self.position = -1
         self.direction = 1
@@ -18,7 +23,7 @@ class Player:
 
     @property
     def total_score(self):
-        return sum(chip.value for chip in self.bag)
+        return sum(chip.value for chip in self.stock)
     
     def move(self, dice_roll, board):
         n_chip = len(self.bag)
@@ -56,7 +61,7 @@ class Player:
 
     # @property
     def chip_per_level(self, level):
-        return len([c for c in self.bag if c.level == level])
+        return len([c for c in self.stock if c.level == level])
     # def chip_level_counter(self):
     #     return Counter(chip.level for chip in self.bag)
 
@@ -71,6 +76,10 @@ class Player:
     @property
     def is_start(self):
         return (not self.is_onboard) and (self.direction == 1)
+
+    @property
+    def n_bag(self):
+        return len(self.bag)
     
     def __repr__(self):
         return "Player(name={}, bag={}, stock={}, position={})".format(
@@ -83,11 +92,42 @@ class Player:
 
         return s.format(self.name, len(self.bag), *counts)
 
+    def get_scores(self):
+        """ Return a list of scoring points in order of importance.
+        First score: the player's total score.
+        Other scores: number of chips from level 4 to 1"""
+        chip_scores = [self.chip_per_level(chip_level)
+                       for chip_level in [4, 3, 2, 1]]
+
+        return [self.total_score] + chip_scores
+
+    def __eq__(self, other):
+        zipper = zip(self.get_scores(), other.get_scores())
+        for self_score, other_score in zipper:
+            if not self_score == other_score:
+                return False
+        return True
+
+    def __ne__(self, other):
+        return not (self == other)
+
+    def __lt__(self, other):
+        zipper = zip(self.get_scores(), other.get_scores())
+        for self_score, other_score in zipper:
+            if self_score == other_score:
+                continue
+            elif self_score < other_score:
+                return True
+            else:
+                return False
+        # all scores are equal
+        return False
+
 
 class Submarine:
     
     def __init__(self):
-        self.air = 25
+        self.air = 10
             
     def reduce_air(self, player):
         n_chip = len(player.bag)
