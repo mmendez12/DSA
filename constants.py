@@ -19,11 +19,14 @@ def get_chip_loc(idx):
      (2, 1)
     """
     row_idx = int(idx/N_COL)
+    last_col_index = N_COL - 1
 
     if row_idx % 2 == 0:
+        # even rows: place chips from left to right
         col_idx = idx % N_COL
     else:
-        col_idx = (N_COL - 1) - (idx % N_COL)
+        # odd rows: place chips from right to left
+        col_idx = last_col_index - (idx % N_COL)
 
     return row_idx, col_idx
 
