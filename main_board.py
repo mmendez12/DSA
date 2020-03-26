@@ -7,6 +7,9 @@ import pygame as pg
 
 from constants import *
 from graphics import *
+from initializer import init_chips_and_pos
+
+CHIPS, POS_DICT = init_chips_and_pos()
 
 ACTIONS = ['(b): go back', '(r): roll dice', '(t): take chip', '(d): drop chip', '(c): continue']
 
@@ -18,18 +21,6 @@ ACTION_SPACE = 5
 
 ACTION_COLORS_DICT = {False: GREY, True: WHITE}
 
-
-CHIPS = []
-
-for value in range(CHIP_MAX_VALUE + 1):
-    level = int(value / N_LEVEL) + 1
-    CHIPS.append(Chip(level, value))
-    CHIPS.append(Chip(level, value))
-
-random.shuffle(CHIPS)
-CHIPS.sort(key=lambda x: x.level)
-
-POS_DICT = {i: loc_to_pos(*get_chip_loc(i)) for i in range(len(CHIPS))}
 
 class Game:
     def __init__(self, board, players):
