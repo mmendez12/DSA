@@ -86,11 +86,11 @@ class Player:
             self.name, self.bag, self.stock, self.position)
 
     def __str__(self):
-        s = "Player: {} - bag: {} - 1: {} - 2: {} - 3: {} - 4: {}"
+        s = "Player: {} - position: {} - bag: {} - 1: {} - 2: {} - 3: {} - 4: {}"
         levels = [chip.level for chip in self.bag]
         counts = [levels.count(i) for i in range(1, 5)]
 
-        return s.format(self.name, len(self.bag), *counts)
+        return s.format(self.name, self.position, len(self.bag), *counts)
 
     def get_scores(self):
         """ Return a list of scoring points in order of importance.

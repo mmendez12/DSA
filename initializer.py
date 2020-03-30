@@ -54,9 +54,8 @@ def init_chips_and_pos():
     for i in range(len(CHIPS)):
         chip_loc = get_chip_loc(i)
         pos = loc_to_pos(chip_loc[0], chip_loc[1])
-        # pos[1] += i * SPACE_SIZE
+        pos[1] += i * SPACE_SIZE
         POS_DICT[i] = pos
-
 
     return CHIPS, POS_DICT
 
