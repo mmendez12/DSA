@@ -112,8 +112,27 @@ class Game:
         return self.dice_rolled
 
 
+def print_winner(surface, game):
+    winner_list = game.get_winners()
+    winner_name = ' and '.join([w.name for w in winner_list])
+
+    if len(winner_list) > 1:
+        winner_str = "Players {} won".format(winner_name)
+    else:
+        winner_str = "Player {} won".format(winner_name)
+
+    print(winner_str)
+    font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
+    label = font.render(winner_str, 1, WHITE)
+    rect = label.get_rect()
+    rect.bottomright = (BOARD_WIDTH/2, BOARD_HEIGHT)
+    surface.blit(label, rect.topleft)
+
+
 def screen_controls(surface, game):
+
     if game.end:
+        # print_winner(surface, game)
         winner_list = game.get_winners()
         winner_name = ' and '.join([w.name for w in winner_list])
 
@@ -123,19 +142,23 @@ def screen_controls(surface, game):
             winner_str = "Player {} won".format(winner_name)
 
         print(winner_str)
-        # TODO: Stop here and print winner's name
+        e_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
+        e_label = e_font.render(winner_str, 1, WHITE)
+        e_rect = e_label.get_rect()
+        e_rect.topright = (BOARD_WIDTH, 0)
+        surface.blit(e_label, e_rect.topleft)
+    else:
+        player_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
+        label = player_font.render(str(game.current_player), 1, game.current_player.color)
+        label_rect = label.get_rect()
+        label_rect.topright = (BOARD_WIDTH, 0)
+        surface.blit(label, label_rect.topleft)
 
-    player_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
-    label = player_font.render(str(game.current_player), 1, game.current_player.color)
-    label_rect = label.get_rect()
-    label_rect.topright = (BOARD_WIDTH, 0)
-    surface.blit(label, label_rect.topleft)
-
-    round_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
-    round_label = round_font.render('Round {}'.format(game.round), 1, WHITE)
-    round_rect = round_label.get_rect()
-    round_rect.bottomleft = (0, BOARD_HEIGHT)
-    surface.blit(round_label, round_rect.topleft)
+        round_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
+        round_label = round_font.render('Round {}'.format(game.round), 1, WHITE)
+        round_rect = round_label.get_rect()
+        round_rect.bottomleft = (0, BOARD_HEIGHT)
+        surface.blit(round_label, round_rect.topleft)
 
     air_font = pg.font.SysFont('Sans Serif', DEFAULT_FONT_SIZE)
     air_label = air_font.render('Air: {}'.format(game.submarine.air), 1, WHITE)
@@ -159,6 +182,8 @@ def screen_controls(surface, game):
         dropping_rect = dropping_label.get_rect()
         dropping_rect.midtop = (BOARD_WIDTH / 2, game.board.road[-1].rect.bottom + SPACE_SIZE)
         surface.blit(dropping_label, dropping_rect)
+
+
 
 
 def main():
@@ -191,7 +216,6 @@ def main():
 
         if game.round > 3:
             game.end = True
-            continue
 
         if game.current_player.is_back:
             game.next_player()
@@ -221,7 +245,7 @@ def main():
                     game.dice_rolled = True
 
                 elif (event.key == pg.K_c) and game.can_continue:
-                    if game.submarine.air < 0:
+                    if game.submarine.air <= 0:
                         game.round_end = True
                     game.next_player()
 
